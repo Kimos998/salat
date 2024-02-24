@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مواقيت الصلاة</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  .prayer-time {
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+<h1>مواقيت الصلاة</h1>
+
+<div class="prayer-time" id="fajr"></div>
+<div class="prayer-time" id="dhuhr"></div>
+<div class="prayer-time" id="asr"></div>
+<div class="prayer-time" id="maghrib"></div>
+<div class="prayer-time" id="isha"></div>
+
+<script>
+  // استرجاع بيانات توقيت الصلاة
+  fetch('https://script.googleusercontent.com/macros/echo?user_content_key=iWNzmymBrbdDYCwrccSAcXapjC8mzHUyyCCzCvZ0FglOJHhySms_B0srWinTTWdVR1l1NGEWFXQ4X48A9dV_Y2gJuhK-1mxwm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnE7JidFmQIK1gm8XyXODYxfDvMvOKg9ehJdOy-3zBrgh_DfglaCMou5FQSV837cyqYuF9KwTw2fTv2NQ1YKPaDX8Ac-xEzTXOA&lib=Mvf4bACzQem0wvTz5_UPHdcaF4-yRly96')
+    .then(response => response.json())
+    .then(prayerData => {
+      // استرجاع بيانات تاريخ اليوم
+      fetch('https://script.googleusercontent.com/macros/echo?user_content_key=IUqBMc22FmPtFwmPV3t_eiZZ95COkkCTToTetb1w49E9SpLvXOqJb3tllc1BYSVH01KVnBujzhE4X48A9dV_Y_gx2qVFdB6sm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnDONrQIBbd5QHLPxmAJw67-hlTOtpQRSTu4Tpg4WgD7xi9G-3Q_XiaO-k_tkSp04eQApnq4geq3MTKMaf--F7xPhdK49CZ5R6dz9Jw9Md8uu&lib=MkBW7tRZNA9QKyGpWi2oh1t_zXdP-wJck')
+        .then(response => response.json())
+        .then(dateData => {
+          // الحصول على تاريخ اليوم
+          const today = new Date(dateData.content[1][0]);
+          const dayNumber = today.getDate();
+
+          // البحث عن بيانات التوقيت
+          const prayerTimes = prayerData.content.find(item => item[2] === dayNumber);
+
+          // عرض مواقيت الصلاة بتنسيق الساعة والدقائق بدون الثواني
+          const options = { hour: 'numeric', minute: 'numeric' };
+          document.getElementById('fajr').innerHTML = `<p>الفجر: ${new Date(prayerTimes[3]).toLocaleTimeString('ar-MA', options)}</p>`;
+          document.getElementById('dhuhr').innerHTML = `<p>الظهر: ${new Date(prayerTimes[5]).toLocaleTimeString('ar-MA', options)}</p>`;
+          document.getElementById('asr').innerHTML = `<p>العصر: ${new Date(prayerTimes[6]).toLocaleTimeString('ar-MA', options)}</p>`;
+          document.getElementById('maghrib').innerHTML = `<p>المغرب: ${new Date(prayerTimes[7]).toLocaleTimeString('ar-MA', options)}</p>`;
+          document.getElementById('isha').innerHTML = `<p>العشاء: ${new Date(prayerTimes[8]).toLocaleTimeString('ar-MA', options)}</p>`;
+        })
+        .catch(error => console.error('حدث خطأ في جلب بيانات تاريخ اليوم: ', error));
+    })
+    .catch(error => console.error('حدث خطأ في جلب بيانات توقيت الصلاة: ', error));
+</script>
+
+</body>
+</html>
